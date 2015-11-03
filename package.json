@@ -1,0 +1,15 @@
+{
+  "name": "aid-sync",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yuren Ju <yurenju@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "jsdom": "^3.0",
+    "shelljs": "^0.5.3"
+  }
+}
