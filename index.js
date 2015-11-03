@@ -58,7 +58,7 @@ var finish = function() {
   rm('-rf', 'out');
   exec('git clone "https://' + token +
        '@' + repo + '" --depth 1 -b gh-pages out');
-  cp(csvFilename, 'out');
+  cp('-f', csvFilename, 'out');
   cd('out');
   exec('git add .');
   exec('git commit -m "Automatic commit: ' + Date() + '"');
