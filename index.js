@@ -35,6 +35,7 @@ ret.output.split('\n').forEach(function(line) {
 
 var downloadCommand = [
   'curl -X POST',
+  '-d "prog_id=SG25020&qcityno=6300000000"',
   '-b "' + cookies.join('&') + '"',
   '-H "Cookie: ' + cookies.join('; ') + '"',
   '--user-agent "' + userAgent + '" ',
