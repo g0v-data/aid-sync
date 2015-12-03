@@ -4,7 +4,7 @@
 
 由於衛福部的重大災害物資平台僅能使用 IE 登入，而目前 Open Data 的方法是由台北市社會局每季從衛福部的網站**手動**下載一次資料並且放到 [台北市開放資料平台](http://data.taipei/opendata/datalist/datasetMeta?oid=99303c65-81f3-49b6-a5c6-c876743c7508)。為了提升效率，所以撰寫了這個小程式用 curl 指令改變 user-agent 模擬 IE 登入衛福部網站、下載資料並且從 HTML 轉換成 CSV 標準格式。
 
-每日更新的 CSV 位置： [https://github.com/g0v/aid-sync/blob/gh-pages/aid.csv](https://github.com/g0v/aid-sync/blob/gh-pages/aid.csv)
+每日更新的 CSV 位置： [https://github.com/g0v-data/aid-sync/blob/gh-pages/aid.csv](https://github.com/g0v-data/aid-sync/blob/gh-pages/aid.csv)
 
 ## 每日自動備份
 
