@@ -3,3 +3,5 @@ aid.html
 node_modules
 captcha.jpg
 .env
+jspm_packages
+.serverless
