@@ -15,6 +15,6 @@ provider:
 functions:
   fetch:
     handler: handler.fetch
-    timeout: 30
+    timeout: 300
     events:
-      - schedule: rate(1 day)
+      - schedule: rate(7 days)

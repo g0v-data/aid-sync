@@ -15,8 +15,8 @@ var baseUrl = 'http://rvis-manage.mohw.gov.tw';
 var loginUrl = baseUrl + '/login.do';
 var downloadUrl = baseUrl + '/jsp/sg/sg2/sg25020_rpt.jsp';
 var captchaUrl = baseUrl + '/ImageServlet';
-var htmlFilename = 'aid.html';
-var csvFilename = 'aid.csv';
+var htmlFilename = '/tmp/aid.html';
+var csvFilename = '/tmp/aid.csv';
 var RE_COOKIE = /Set-Cookie: (.+?)=(.+?);/;
 var repo = env.AID_GH_REF;
 var token = env.AID_GH_TOKEN;
@@ -36,17 +36,24 @@ module.exports = function(cb) {
       console.log('upload to github');
       var email = exec('git config user.email').output;
       if (!email) {
+        console.log('setup email and username');
         exec('git config user.email aid@g0v.tw');
         exec('git config user.name "aid-sync project"');
       }
 
+      console.log('switch to /tmp and remove "out" directory');
+      cd('/tmp');
       rm('-rf', 'out');
+
+      console.log('cloning...');
       exec('git clone "https://' + token +
           '@' + repo + '" --depth 1 -b gh-pages out');
+      console.log('done, copy csv file');
       cp('-f', csvFilename, 'out');
       cd('out');
       exec('git add .');
       exec('git commit -m "Automatic commit: ' + Date() + '"');
+      console.log('pushing back to github');
       exec('git push "https://' + token +
           '@' + repo + '" gh-pages', {silent: true});
       cb(null, response);
@@ -67,18 +74,18 @@ module.exports = function(cb) {
     },
     function(cookie, done) {
       console.log('download captcha');
-      var downloadCaptchaCommand = `curl '${captchaUrl}' -H 'User-Agent: ${userAgent}' -H 'Cookie: ${cookie}' -o captcha.jpg`;
+      var downloadCaptchaCommand = `curl '${captchaUrl}' -H 'User-Agent: ${userAgent}' -H 'Cookie: ${cookie}' -o /tmp/captcha.jpg`;
       exec(downloadCaptchaCommand);
       done(null, cookie);
     },
     function(cookie, done) {
       console.log('decode...');
-      var captcha = fs.readFileSync('captcha.jpg');
+      var captcha = fs.readFileSync('/tmp/captcha.jpg');
       var base64 = new Buffer(captcha).toString('base64');
       service.uploadCaptcha(base64, {phrase: true})
       .then(captcha => service.getText(captcha))
       .then(captcha => {
-        console.log('captcha.text', captcha.text, cookie);
+        console.log('captcha.text', captcha.text);
         done(null, captcha.text, cookie);
       });
     },
