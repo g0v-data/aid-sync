@@ -6,7 +6,6 @@ var jsdom = require('jsdom');
 var async = require('async');
 var anticaptcha = require('anti-captcha');
 var service = anticaptcha('http://anti-captcha.com', process.env.ANTI_CAPTCHA_KEY);
-require('lambda-git')();
 
 var userAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko';
 var username = env.RVIS_USERNAME;
@@ -15,50 +14,12 @@ var baseUrl = 'http://rvis-manage.mohw.gov.tw';
 var loginUrl = baseUrl + '/login.do';
 var downloadUrl = baseUrl + '/jsp/sg/sg2/sg25020_rpt.jsp';
 var captchaUrl = baseUrl + '/ImageServlet';
-var htmlFilename = '/tmp/aid.html';
-var csvFilename = '/tmp/aid.csv';
+var htmlFilename = 'out/aid.html';
+var csvFilename = 'out/aid.csv';
 var RE_COOKIE = /Set-Cookie: (.+?)=(.+?);/;
-var repo = env.AID_GH_REF;
-var token = env.AID_GH_TOKEN;
 
-module.exports = function(cb) {
-  var finish = function(err) {
-    if (err) {
-      cb(err);
-    }
-    else {
-      const response = {
-        statusCode: 200,
-        body: JSON.stringify({
-          message: 'successful'
-        }),
-      };
-      console.log('upload to github');
-      var email = exec('git config user.email').output;
-      if (!email) {
-        console.log('setup email and username');
-        exec('git config user.email aid@g0v.tw');
-        exec('git config user.name "aid-sync project"');
-      }
-
-      console.log('switch to /tmp and remove "out" directory');
-      cd('/tmp');
-      rm('-rf', 'out');
-
-      console.log('cloning...');
-      exec('git clone "https://' + token +
-          '@' + repo + '" --depth 1 -b gh-pages out');
-      console.log('done, copy csv file');
-      cp('-f', csvFilename, 'out');
-      cd('out');
-      exec('git add .');
-      exec('git commit -m "Automatic commit: ' + Date() + '"');
-      console.log('pushing back to github');
-      exec('git push "https://' + token +
-          '@' + repo + '" gh-pages', {silent: true});
-      cb(null, response);
-    }
-  }
+module.exports = function(finish) {
+  mkdir('-p', 'out');
 
   var cookieJar = jsdom.createCookieJar();
   async.waterfall([
@@ -143,9 +104,14 @@ module.exports = function(cb) {
             csv.push(line);
           });
           csv.join('\n').to(csvFilename);
-          done();
+          rm(htmlFilename);
+          done(null);
         }
       );
     }
   ], finish);
+}
+
+if (require.main === module) {
+  module.exports(err => console.log(err));
 }

@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+- '6'
+
+script: npm start
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $AID_GH_TOKEN
+  local_dir: out
+  on:
+    branch: master
