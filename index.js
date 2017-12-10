@@ -39,7 +39,7 @@ module.exports = function(finish) {
     },
     function(done) {
       const cookie = cookieJar.store.idx['rvis-manage.mohw.gov.tw']['/']['JSESSIONID'].value;
-      console.log('download captcha, cookie: ' + cookie);
+      console.log('download captcha');
       const command = [
         'curl',
         captchaUrl,
@@ -97,7 +97,6 @@ module.exports = function(finish) {
         downloadUrl
       ].join(' ');
 
-      console.log('download command: ', downloadCommand);
       exec(downloadCommand);
       var html = cat(htmlFilename);
       done(null, html);
